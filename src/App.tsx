@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { X, Share2, ShoppingCart, MoreHorizontal, Star, ChevronRight, Store, MessageCircle, CreditCard, Package, CheckCircle, Ticket, ShieldCheck, Play, CircleUser } from 'lucide-react';
+import { X, Share2, ShoppingCart, MoreHorizontal, Star, ChevronRight, Store, MessageCircle, CreditCard, Package, CheckCircle, Ticket, ShieldCheck, Play, CircleUser, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Função para redirecionar para o link de pagamento
   const handleBuyNow = () => {
@@ -15,6 +16,55 @@ function App() {
     // Por enquanto vou redirecionar para o mesmo link
     window.location.href = 'https://pay.safetypag.shop/68eda37bdd08eb4fb17aceb6';
   };
+
+  // Dados para as imagens do produto (7.webp ao 15.webp)
+  const productImages = [
+    {
+      id: 1,
+      src: "7.webp",
+      alt: "Bicicleta Ergométrica - Vista frontal"
+    },
+    {
+      id: 2,
+      src: "8.webp",
+      alt: "Bicicleta Ergométrica - Vista lateral"
+    },
+    {
+      id: 3,
+      src: "9.webp",
+      alt: "Bicicleta Ergométrica - Detalhes do banco"
+    },
+    {
+      id: 4,
+      src: "10.webp",
+      alt: "Bicicleta Ergométrica - Roda de inércia"
+    },
+    {
+      id: 5,
+      src: "11.webp",
+      alt: "Bicicleta Ergométrica - Painel de controle"
+    },
+    {
+      id: 6,
+      src: "12.webp",
+      alt: "Bicicleta Ergométrica - Estrutura"
+    },
+    {
+      id: 7,
+      src: "13.webp",
+      alt: "Bicicleta Ergométrica - Detalhes técnicos"
+    },
+    {
+      id: 8,
+      src: "14.webp",
+      alt: "Bicicleta Ergométrica - Vista superior"
+    },
+    {
+      id: 9,
+      src: "15.webp",
+      alt: "Bicicleta Ergométrica - Em uso"
+    }
+  ];
 
   // Dados para os vídeos dos criadores
   const creatorVideos = [
@@ -44,6 +94,72 @@ function App() {
     }
   ];
 
+  // Dados para as avaliações com fotos reais
+  const reviews = [
+    {
+      id: 1,
+      name: "Marcos Pereira",
+      photo: "Marcos.jfif",
+      rating: 5,
+      comment: "Excelente bicicleta! A roda de inércia de 13kg proporciona um pedal muito suave. Estou usando há 2 meses e superou minhas expectativas.",
+      initials: "MP"
+    },
+    {
+      id: 2,
+      name: "Ana Silva",
+      photo: "Ana.jfif",
+      rating: 4,
+      comment: "Muito boa para treinos em casa. O ajuste de carga é preciso e a estrutura é bem robusta. Recomendo!",
+      initials: "AS"
+    },
+    {
+      id: 3,
+      name: "Ricardo Costa",
+      photo: "Ricardo.jfif",
+      rating: 5,
+      comment: "Perfeita para quem busca qualidade. A roda de inércia faz toda diferença no treino. Montagem foi simples e rápida.",
+      initials: "RC"
+    },
+    {
+      id: 4,
+      name: "Fernanda Martins",
+      photo: "Fernanda.jfif",
+      rating: 3,
+      comment: "Boa bicicleta, mas o banco poderia ser mais confortável. No geral atende bem para treinos diários.",
+      initials: "FM"
+    }
+  ];
+
+  // Funções para navegar o slider de imagens
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === productImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? productImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Função para renderizar estrelas
+  const renderStars = (rating) => {
+    return (
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Star 
+            key={i} 
+            size={12} 
+            fill={i <= rating ? "#FFD700" : "none"} 
+            color="#FFD700" 
+            className={i <= rating ? "" : "opacity-50"}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-sans" style={{ fontFamily: "'TikTok Sans', sans-serif" }}>
      
@@ -59,14 +175,52 @@ function App() {
         </div>
       </header>
 
-      {/* Product Hero Image */}
+      {/* Product Image Slider */}
       <div className="relative">
-        <div className="aspect-square">
+        <div className="aspect-square relative overflow-hidden">
           <img
-            src="5.webp"
-            alt="Produto em destaque"
-            className="w-full h-full object-cover"
+            src={productImages[currentImageIndex].src}
+            alt={productImages[currentImageIndex].alt}
+            className="w-full h-full object-cover transition-transform duration-300"
           />
+          
+          {/* Navigation Arrows */}
+          <button 
+            onClick={prevImage}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button 
+            onClick={nextImage}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"
+          >
+            <ChevronRightIcon size={20} />
+          </button>
+
+          {/* Image Counter */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+            {currentImageIndex + 1} / {productImages.length}
+          </div>
+        </div>
+
+        {/* Image Thumbnails */}
+        <div className="flex gap-2 px-4 py-2 overflow-x-auto bg-gray-900">
+          {productImages.map((image, index) => (
+            <button
+              key={image.id}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`flex-shrink-0 w-16 h-16 rounded border-2 ${
+                index === currentImageIndex ? 'border-[#ff2953]' : 'border-gray-700'
+              }`}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover rounded"
+              />
+            </button>
+          ))}
         </div>
       </div>
 
@@ -275,101 +429,45 @@ function App() {
               </div>
 
               <div className="space-y-4">
-                {/* Comentário 1 */}
-                <div className="border-b border-gray-800 pb-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                      MP
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="text-sm font-medium text-white">Marcos Pereira</div>
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star key={i} size={12} fill="#FFD700" color="#FFD700" />
-                          ))}
+                {reviews.map((review) => (
+                  <div key={review.id} className="border-b border-gray-800 pb-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-gray-700">
+                        <img 
+                          src={review.photo} 
+                          alt={review.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback para iniciais caso a imagem não carregue
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div 
+                          className="w-full h-full hidden items-center justify-center text-white text-xs font-bold"
+                          style={{ 
+                            backgroundColor: 
+                              review.name === 'Marcos Pereira' ? '#3b82f6' :
+                              review.name === 'Ana Silva' ? '#10b981' :
+                              review.name === 'Ricardo Costa' ? '#8b5cf6' : '#ef4444'
+                          }}
+                        >
+                          {review.initials}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-400 mb-2">Item: Bicicleta Ergométrica Gallant Elite Spinning Roda de Inércia 13KG até 110KG Mecânica GSB13HBTA-PT</div>
-                      <p className="text-sm text-white">
-                        Excelente bicicleta! A roda de inércia de 13kg proporciona um pedal muito suave. Estou usando há 2 meses e superou minhas expectativas.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Comentário 2 */}
-                <div className="border-b border-gray-800 pb-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                      AS
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="text-sm font-medium text-white">Ana Silva</div>
-                        <div className="flex">
-                          {[1, 2, 3, 4].map((i) => (
-                            <Star key={i} size={12} fill="#FFD700" color="#FFD700" />
-                          ))}
-                          <Star size={12} fill="#FFD700" color="#FFD700" className="opacity-50" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="text-sm font-medium text-white">{review.name}</div>
+                          {renderStars(review.rating)}
                         </div>
+                        <div className="text-xs text-gray-400 mb-2">Item: Bicicleta Ergométrica Gallant Elite Spinning Roda de Inércia 13KG até 110KG Mecânica GSB13HBTA-PT</div>
+                        <p className="text-sm text-white">
+                          {review.comment}
+                        </p>
                       </div>
-                      <div className="text-xs text-gray-400 mb-2">Item: Bicicleta Ergométrica Gallant Elite Spinning Roda de Inércia 13KG até 110KG Mecânica GSB13HBTA-PT</div>
-                      <p className="text-sm text-white">
-                        Muito boa para treinos em casa. O ajuste de carga é preciso e a estrutura é bem robusta. Recomendo!
-                      </p>
                     </div>
                   </div>
-                </div>
-
-                {/* Comentário 3 */}
-                <div className="border-b border-gray-800 pb-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                      RC
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="text-sm font-medium text-white">Ricardo Costa</div>
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star key={i} size={12} fill="#FFD700" color="#FFD700" />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-400 mb-2">Item: Bicicleta Ergométrica Gallant Elite Spinning Roda de Inércia 13KG até 110KG Mecânica GSB13HBTA-PT</div>
-                      <p className="text-sm text-white">
-                        Perfeita para quem busca qualidade. A roda de inércia faz toda diferença no treino. Montagem foi simples e rápida.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Comentário 4 */}
-                <div className="pb-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                      FM
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="text-sm font-medium text-white">Fernanda Martins</div>
-                        <div className="flex">
-                          {[1, 2, 3].map((i) => (
-                            <Star key={i} size={12} fill="#FFD700" color="#FFD700" />
-                          ))}
-                          {[1, 2].map((i) => (
-                            <Star key={i} size={12} fill="#FFD700" color="#FFD700" className="opacity-50" />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-400 mb-2">Item: Bicicleta Ergométrica Gallant Elite Spinning Roda de Inércia 13KG até 110KG Mecânica GSB13HBTA-PT</div>
-                      <p className="text-sm text-white">
-                        Boa bicicleta, mas o banco poderia ser mais confortável. No geral atende bem para treinos diários.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
